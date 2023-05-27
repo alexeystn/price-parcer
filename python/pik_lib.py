@@ -15,6 +15,9 @@ class Database:
 
     def __init__(self):
 
+        if not os.path.isdir('../database'):
+            os.mkdir('../database')
+
         need_to_initialize = False
         if os.path.isfile(self.filename):
             print('Database found')
@@ -72,6 +75,10 @@ def download_flats(project, archive_enabled=False):
 
     result = []
     filenames = []
+
+    if archive_enabled:
+        if not os.path.isdir('../archive'):
+            os.mkdir('../archive')
     
     for i in range(100):
         
