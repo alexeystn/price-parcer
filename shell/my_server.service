@@ -1,7 +1,7 @@
 [Unit]
 Description=My server
 [Service]
-ExecStart=~/price-parser/shell/server.sh
-WorkingDirectory=~/price-parser/
+ExecStart=/root/price-parser/shell/server.sh
+WorkingDirectory=/root/price-parser/
 [Install]
 WantedBy=multi-user.target
