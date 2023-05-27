@@ -47,6 +47,18 @@ class Database:
                       ''')            
             self.save_changes()
 
+    def get_price_timeline(self, flat_id):
+        q = """
+        SELECT timestamp, price
+        FROM flats
+        WHERE flat_id={0}
+        ORDER BY timestamp
+        """.format(flat_id)
+        res = self.cursor.execute(q).fetchall()
+        timestamps = [r[0] for r in res]
+        price = [r[1] for r in res]
+        return timestamps, price
+
     def write(self, flat):
         q_parameters = ','.join(flat.keys())
         q_values = ','.join( [ "'"+i+"'" if type(i) is str
