@@ -1,3 +1,3 @@
 # price-parcer
 
-description
+`python3 download_prices.py -w` - download prices and update database
