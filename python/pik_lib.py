@@ -8,6 +8,57 @@ import numpy as np
 from datetime import datetime
 
 
+class Database:
+
+    filename = '../database/database.db'
+    timestamp_margin = 300
+
+    def __init__(self):
+
+        need_to_initialize = False
+        if os.path.isfile(self.filename):
+            print('Database found')
+        else:
+            need_to_initialize = True
+            print('Database not found')
+            print('Creating new database')
+
+        self.conn = sqlite3.connect(self.filename)
+        self.cursor = self.conn.cursor()
+
+        if need_to_initialize:
+            self.cursor.execute('''
+                      CREATE TABLE IF NOT EXISTS flats
+                      ([record_id] INTEGER PRIMARY KEY,
+                      [project] TEXT,
+                      [flat_id] INTEGER,
+                      [area] REAL,
+                      [number] INTEGER,
+                      [price] INTEGER,
+                      [rooms] INTEGER,
+                      [floor] INTEGER,
+                      [bulk_id] INTEGER,
+                      [bulk_title] TEXT,
+                      [timestamp] INTEGER
+                      )
+                      ''')            
+            self.save_changes()
+
+    def write(self, flat):
+        q_parameters = ','.join(flat.keys())
+        q_values = ','.join( [ "'"+i+"'" if type(i) is str
+                               else str(i)
+                               for i in flat.values()] )
+        self.cursor.execute('''
+                            INSERT INTO flats ({0})
+                            VALUES({1});
+                            '''.format(q_parameters, q_values))
+
+    def save_changes(self):
+        self.conn.commit()
+
+
+
 def load_project_list():
     with open('projects.json', 'r') as f:
         data = json.load(f)
@@ -38,14 +89,17 @@ def download_flats(project, archive_enabled=False):
             break
 
         for flat in flats:
-            d = {'area': flat['area'],
+            d = {
+                 'project': project['url'],
+                 'flat_id': flat['id'],
+                 'area': flat['area'],
                  'number': flat['number'],
                  'price': flat['price'],
                  'rooms': flat['rooms'],
                  'floor': flat['floor'],
                  'bulk_id': flat['bulk']['id'],
-                 'bulk_name': flat['bulk']['name'],
-                 'bulk_title': flat['bulk']['title']
+                 'bulk_title': flat['bulk']['title'],
+                 'timestamp': int(datetime.timestamp(datetime.now()))
                  }
             result.append(d)
 
@@ -82,4 +136,3 @@ def download_project_list():
                              'name': project['name'],
                              'url': project['url']})
     return project_list
-
