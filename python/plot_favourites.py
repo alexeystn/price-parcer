@@ -7,8 +7,16 @@ from datetime import datetime, timedelta
 from matplotlib import pyplot as plt
 import pik_lib
 
-def rectify(ts_list, pr_list):
-    return ts_list, pr_list
+def rectify(times_in, price_in):
+    times_out = [times_in[0]]
+    price_out = [price_in[0]]
+    for i in range(1, len(price_in)):
+        if price_in[i] != price_out[-1]:
+            price_out.append(price_in[i-1])
+            times_out.append(times_in[i])
+        price_out.append(price_in[i])
+        times_out.append(times_in[i])
+    return times_out, price_out
     
 db = pik_lib.Database()
 
