@@ -84,6 +84,35 @@ class Database:
         res = self.cursor.execute(q)  
         return res
 
+    def count_records(self):
+        res = self.cursor.execute("SELECT COUNT(*) FROM flats").fetchall()[0]
+        return res[0]
+
+    def get_duplicates(self):  # multiple flat_id records
+        q = """
+        SELECT
+            record_id,
+            flat_id,
+            date(timestamp, 'unixepoch'),
+            timestamp,
+            COUNT(*) as "Count"
+        FROM flats
+        GROUP BY
+            flat_id,
+            timestamp / (24*60*60)
+        HAVING COUNT(*) > 1
+        ORDER BY flat_id
+        """
+        res = self.cursor.execute(q).fetchall()
+        return res
+
+    def remove_by_id(self, record_id):
+        q = """
+        DELETE FROM flats
+        WHERE record_id={0}
+        """ .format(record_id)
+        res = self.cursor.execute(q)  
+
     def save_changes(self):
         self.conn.commit()
 
