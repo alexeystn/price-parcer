@@ -69,9 +69,23 @@ class Database:
                             VALUES({1});
                             '''.format(q_parameters, q_values))
 
+    def request(self, request):
+        res = self.cursor.execute(request).fetchall()
+        return res
+
+    def get_daily_report(self, project, days_ago=0):
+        q = """
+        SELECT rooms, COUNT(*)
+        FROM flats
+        WHERE date(timestamp, 'unixepoch')=date('now', '-{0} day')
+        AND project='{1}'
+        GROUP BY project, rooms
+        """ .format(days_ago, project['url'])
+        res = self.cursor.execute(q)  
+        return res
+
     def save_changes(self):
         self.conn.commit()
-
 
 
 def load_project_list():
