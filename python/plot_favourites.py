@@ -23,10 +23,6 @@ db = pik_lib.Database()
 with open('favourites.json', 'r') as f:
     favourites = json.load(f)
 
-with open('projects.json', 'r') as f:
-    projects = json.load(f)
-project_names = {p['url']: p['name'] for p in projects}
-
 fig = plt.figure(figsize=(16, 4.8))
 
 for flat in favourites:
@@ -44,7 +40,8 @@ plt.gca().set_xticklabels(timestamp_labels)
 
 plt.grid(True)
 plt.title(datetime.now().strftime('%Y-%m-%d  %H:%M:%S'))
-plt.legend([flat['comment'] for flat in favourites], loc='upper left', ncol=1)
+plt.legend([flat['comment'] + ' (' + str(flat['id']) + ')'
+            for flat in favourites], loc='upper left', ncol=1)
 plt.show()
 
 if not os.path.isdir('../output'):
