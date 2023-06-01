@@ -22,5 +22,5 @@ for days in range(0,7):
 
 print(s)
 
-with open('../output/report.txt', 'w', encoding='utf-8') as f:
+with open('../output/report.txt', 'w') as f:
     f.write(s)
