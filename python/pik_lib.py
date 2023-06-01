@@ -113,6 +113,13 @@ class Database:
         """ .format(record_id)
         res = self.cursor.execute(q)  
 
+    def remove_by_date(self, date):  # in format: '2023-05-31'
+        q = """
+        DELETE FROM flats
+        WHERE date(timestamp, 'unixepoch')='{0}'
+        """ .format(date)
+        res = self.cursor.execute(q) 
+
     def save_changes(self):
         self.conn.commit()
 
