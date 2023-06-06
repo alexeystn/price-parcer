@@ -15,7 +15,7 @@ for days in range(0,7):
 
     for project in projects:
         res = db.get_daily_report(project, days)
-        s += '{0:16s}'.format(project['name'])
+        s += '{0:8s}'.format(project['url'])
         s += '    '.join(['{0}: {1:3}'.format(r[0], r[1]) for r in res]) + '\n'
 
     s += '\n'
