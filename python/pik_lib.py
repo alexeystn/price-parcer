@@ -81,7 +81,21 @@ class Database:
         AND project='{1}'
         GROUP BY project, rooms
         """ .format(days_ago, project['url'])
-        res = self.cursor.execute(q)  
+        res = self.cursor.execute(q)
+        return res
+
+    def get_most_exposed_flats(self, project_url, limit=10):
+        q = """
+        SELECT
+            flat_id,
+            (max(timestamp) - min(timestamp)) / (24*60*60)
+        FROM flats
+        WHERE project='{0}'
+        GROUP BY flat_id
+        ORDER BY (max(timestamp) - min(timestamp)) DESC
+        LIMIT {1};
+        """ .format(project_url, limit)
+        res = self.cursor.execute(q).fetchall()
         return res
 
     def count_records(self):
@@ -111,21 +125,21 @@ class Database:
         DELETE FROM flats
         WHERE record_id={0}
         """ .format(record_id)
-        res = self.cursor.execute(q)  
+        res = self.cursor.execute(q)
 
     def remove_by_date(self, date):  # in format: '2023-05-31'
         q = """
         DELETE FROM flats
         WHERE date(timestamp, 'unixepoch')='{0}'
         """ .format(date)
-        res = self.cursor.execute(q) 
+        res = self.cursor.execute(q)
 
     def save_changes(self):
         self.conn.commit()
 
 
 def load_project_list():
-    with open('projects.json', 'r') as f:
+    with open('projects.json', 'r', encoding='utf-8') as f:
         data = json.load(f)
     return data
 
@@ -141,9 +155,9 @@ def download_flats(project, archive_enabled=False):
     if archive_enabled:
         if not os.path.isdir('../archive'):
             os.mkdir('../archive')
-    
+
     for i in range(100):
-        
+
         url = 'https://api-selectel.pik-service.ru/v2/filter'
         params = {'block': project['id'],
                   'flatPage': i + 1,
@@ -190,7 +204,7 @@ def download_flats(project, archive_enabled=False):
         filename = '../archive/{0}_{1}.json'.format(get_ts(), project['url'])
         with open(filename, 'w', encoding='utf-8') as f:
             json.dump(result, f, indent=2)
-    
+
     return result
 
 
