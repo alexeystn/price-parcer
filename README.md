@@ -25,7 +25,7 @@ Add following line: <br>
 
 7. Configure autorun http-server: <br>
 `cd ~/price-parser/shell/` <br>
-`install_server.sh`
+`source install_server.sh`
 
 ### Other commands:
 
