@@ -31,7 +31,7 @@ def plot_set_of_flats(flats_list, png_filename):
 
     # replace timestamps with month-day labels
     xmin, xmax, _, _ = plt.axis()
-    timestamp_ticks = np.arange(xmin - xmin % (24*60*60), xmax, 7*(24*60*60))
+    timestamp_ticks = np.arange(xmin - xmin % (24*60*60), xmax, 14*(24*60*60))
     timestamp_labels = [datetime.fromtimestamp(t).strftime('%d %b')
                         for t in timestamp_ticks]
     plt.xticks(timestamp_ticks, rotation=45)
